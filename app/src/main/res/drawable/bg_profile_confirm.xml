@@ -1,0 +1,4 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#7E7E75"/> <!-- 이미지 느낌의 그레이 -->
+    <corners android:radius="12dp"/>
+</shape>

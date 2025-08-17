@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="24dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- 닫기(X) -->
+        <ImageView
+            android:id="@+id/btn_close"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="닫기"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- 제목 -->
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="질병/질환 정보"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/loginTextDark"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_close"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- 설명 -->
+        <TextView
+            android:id="@+id/tv_subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="가지고 계신 질병에 대해 작성해주세요."
+            android:textSize="14sp"
+            android:textColor="@color/fieldOutline"
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 구분선(연한 핑크) -->
+        <View
+            android:id="@+id/divider_top"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="12dp"
+            android:background="@color/brandSecondary"
+            app:layout_constraintTop_toBottomOf="@id/tv_subtitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 기존 메모 목록(스크롤) : 최소 높이 + fillViewport 추가 -->
+        <ScrollView
+            android:id="@+id/scroll_notes"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="12dp"
+            android:fillViewport="true"
+            app:layout_constraintTop_toBottomOf="@id/divider_top"
+            app:layout_constraintBottom_toTopOf="@id/input_container"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_min="120dp">
+
+            <LinearLayout
+                android:id="@+id/container_notes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+
+        <!-- 하단 입력 + 연필 저장 -->
+        <LinearLayout
+            android:id="@+id/input_container"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="4dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="8dp"
+            android:background="@drawable/bg_input_rounded"
+            android:gravity="center_vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <EditText
+                android:id="@+id/et_note"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="내용을 입력하세요"
+                android:maxLines="3"
+                android:inputType="textCapSentences|textMultiLine"
+                android:background="@android:color/transparent"
+                android:textSize="16sp" />
+
+            <ImageButton
+                android:id="@+id/btn_save"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:contentDescription="저장"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_edit_black_24"
+                android:scaleType="centerInside"
+                android:adjustViewBounds="true"
+                android:padding="6dp" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Aihealth" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/your_primary_color</item>
+        <item name="colorPrimaryVariant">@color/your_primary_dark_color</item>
+        <item name="colorOnPrimary">@color/your_on_primary_color</item>
+        <item name="colorSecondary">@color/your_secondary_color</item>
+        <item name="colorSecondaryVariant">@color/your_secondary_dark_color</item>
+        <item name="colorOnSecondary">@color/your_on_secondary_color</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+    </style>
+</resources>

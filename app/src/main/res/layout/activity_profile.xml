@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/profile_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/profile_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="28dp"
+        android:paddingEnd="28dp">
+
+        <!-- 1) 상단 타이틀 -->
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:text="프로필 설정"
+            android:textColor="@color/loginTextDark"
+            android:textStyle="bold"
+            android:textSize="28sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- ================== 신체 정보: 키 ================== -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/row_height"
+            android:layout_width="350dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="36dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/label_height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="20dp"
+                android:text="키"
+                android:textColor="@color/loginTextDark"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <View
+                android:id="@+id/divider_v1"
+                android:layout_width="1dp"
+                android:layout_height="28dp"
+                android:background="@color/fieldOutline"
+                android:layout_marginStart="28dp"
+                app:layout_constraintStart_toEndOf="@id/label_height"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_height_value"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:hint="값 선택"
+                android:textColor="@color/loginTextDark"
+                android:textSize="18sp"
+                android:paddingStart="20dp"
+                android:paddingEnd="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintStart_toEndOf="@id/divider_v1"
+                app:layout_constraintEnd_toStartOf="@id/unit_height"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
+                android:id="@+id/unit_height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="cm"
+                android:textColor="@color/loginTextDark"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/fieldOutline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- ================== 신체 정보: 몸무게 ================== -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/row_weight"
+            android:layout_width="350dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="@id/row_height"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/label_weight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="몸무게"
+                android:textColor="@color/loginTextDark"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <View
+                android:id="@+id/divider_v2"
+                android:layout_width="1dp"
+                android:layout_height="28dp"
+                android:background="@color/fieldOutline"
+                android:layout_marginStart="16dp"
+                app:layout_constraintStart_toEndOf="@id/label_weight"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_weight_value"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:hint="값 선택"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:text=""
+                android:textColor="@color/loginTextDark"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/unit_weight"
+                app:layout_constraintStart_toEndOf="@id/divider_v2"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/unit_weight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="kg"
+                android:textColor="@color/loginTextDark"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/fieldOutline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- ================== 신체 정보: 나이 ================== -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/row_age"
+            android:layout_width="350dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="@id/row_weight"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/label_age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:text="나이"
+                android:textColor="@color/loginTextDark"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <View
+                android:id="@+id/divider_v3"
+                android:layout_width="1dp"
+                android:layout_height="28dp"
+                android:background="@color/fieldOutline"
+                android:layout_marginStart="22dp"
+                app:layout_constraintStart_toEndOf="@id/label_age"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_age_value"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:hint="값 선택"
+                android:textColor="@color/loginTextDark"
+                android:textSize="18sp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintStart_toEndOf="@id/divider_v3"
+                app:layout_constraintEnd_toStartOf="@id/unit_age"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
+                android:id="@+id/unit_age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(만)세"
+                android:textColor="@color/loginTextDark"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/fieldOutline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- 상/하 섹션 분리 라인 -->
+        <View
+            android:id="@+id/section_divider_1"
+            android:layout_width="0dp"
+            android:layout_height="4dp"
+            android:layout_marginTop="28dp"
+            android:background="@color/brandSecondary"
+            app:layout_constraintTop_toBottomOf="@id/row_age"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 2) 알레르기 정보 설정 타이틀 -->
+        <TextView
+            android:id="@+id/tv_allergy_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="알레르기 정보 설정"
+            android:textColor="@color/loginTextDark"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            app:layout_constraintTop_toBottomOf="@id/section_divider_1"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- 3) 설명 텍스트(탭 시 알레르기 선택으로) -->
+        <TextView
+            android:id="@+id/tv_allergy_desc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="알레르기 정보를 설정해주세요!"
+            android:textColor="@color/fieldOutline"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:padding="8dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_allergy_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 3-1) 알레르기 미리보기 아이콘 영역 (3칸 + +) -->
+        <LinearLayout
+            android:id="@+id/layout_allergy_preview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="12dp"
+            android:baselineAligned="false"
+            app:layout_constraintTop_toBottomOf="@+id/tv_allergy_desc"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageView
+                android:id="@+id/iv_allergy_1"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:scaleType="centerInside"
+                android:background="@drawable/bg_circle_stroke"
+                android:contentDescription="알레르기 아이콘 1"
+                android:padding="10dp"
+                android:src="@drawable/ic_placeholder" />
+
+            <Space android:layout_width="16dp" android:layout_height="0dp"/>
+
+            <ImageView
+                android:id="@+id/iv_allergy_2"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:scaleType="centerInside"
+                android:background="@drawable/bg_circle_stroke"
+                android:contentDescription="알레르기 아이콘 2"
+                android:padding="10dp"
+                android:src="@drawable/ic_placeholder" />
+
+            <Space android:layout_width="16dp" android:layout_height="0dp"/>
+
+            <ImageView
+                android:id="@+id/iv_allergy_3"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:scaleType="centerInside"
+                android:background="@drawable/bg_circle_stroke"
+                android:contentDescription="알레르기 아이콘 3"
+                android:padding="10dp"
+                android:src="@drawable/ic_placeholder" />
+
+            <Space android:layout_width="16dp" android:layout_height="0dp"/>
+
+            <ImageView
+                android:id="@+id/iv_allergy_plus"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:scaleType="centerInside"
+                android:background="@drawable/bg_circle_stroke"
+                android:contentDescription="알레르기 추가"
+                android:padding="10dp"
+                android:src="@drawable/ic_add" />
+        </LinearLayout>
+
+        <!-- 또 하나의 분리 라인 (미리보기 아래로 이동) -->
+        <View
+            android:id="@+id/section_divider_2"
+            android:layout_width="0dp"
+            android:layout_height="4dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/brandSecondary"
+            app:layout_constraintTop_toBottomOf="@id/layout_allergy_preview"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 4) 질병/질환 정보 카드 -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_disease"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="24dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="4dp"
+            app:layout_constraintTop_toBottomOf="@id/section_divider_2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tv_disease_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="질병/질환 정보"
+                    android:textColor="@color/loginTextDark"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/btn_disease_edit"
+                    app:layout_constraintHorizontal_bias="0" />
+
+                <ImageView
+                    android:id="@+id/btn_disease_edit"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="edit"
+                    android:src="@drawable/ic_edit_black_24"
+                    app:tint="@color/loginTextDark"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_disease_title"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_disease_title" />
+
+                <TextView
+                    android:id="@+id/tv_disease_hint"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="가지고 계신 질병에 대해 작성해주세요."
+                    android:textColor="@color/fieldOutline"
+                    android:textSize="16sp"
+                    app:layout_constraintTop_toBottomOf="@id/tv_disease_title"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 하단 확인 버튼 -->
+        <Button
+            android:id="@+id/btn_profile_confirm"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginBottom="28dp"
+            android:text="확인"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:background="@drawable/bg_profile_confirm"
+            android:backgroundTint="@null"
+            app:backgroundTint="@null"
+            android:stateListAnimator="@null"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

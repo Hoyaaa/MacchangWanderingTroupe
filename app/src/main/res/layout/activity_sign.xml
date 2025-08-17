@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ 기능 및 설계 (회원가입 화면)
+  - 상단 로고(logo_appname.png)
+  - 이메일 라벨 + EditText + "중복 확인" 보조 버튼(#EDD8D8)
+  - 비밀번호 라벨 + EditText
+  - 비밀번호 확인 라벨 + EditText
+  - 비밀번호 불일치 경고 TextView (GONE → 필요 시 VISIBLE)
+  - 이용약관 및 개인정보 동의 CheckBox
+  - 가입하기 기본 버튼(#D2B0B0), 체크박스 미동의/유효성 미충족 시 비활성
+  - ScrollView로 작은 화면/키보드 대응
+  - 로그인 화면과 동일 컬러/배경/에디트텍스트 배경 일관 유지
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sign_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/sign_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="28dp"
+        android:paddingEnd="28dp">
+
+        <!-- 1) 앱 로고 -->
+        <ImageView
+            android:id="@+id/img_logo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logo_appname"
+            android:contentDescription="@string/app_name"
+            app:layout_constraintWidth_percent="0.75"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 2) 이메일 라벨 -->
+        <TextView
+            android:id="@+id/label_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
+            android:text="@string/label_email"
+            android:textColor="@color/loginTextDark"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            app:layout_constraintTop_toBottomOf="@id/img_logo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 3) 이메일 입력 + 중복확인(우측) -->
+        <EditText
+            android:id="@+id/et_email"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
+            android:inputType="textEmailAddress"
+            android:importantForAutofill="yes"
+            android:imeOptions="actionNext"
+            android:singleLine="true"
+            android:background="@drawable/edittext_bg"
+            android:textColorHint="@color/fieldOutline"
+            android:hint="@string/hint_email"
+            app:layout_constraintTop_toBottomOf="@id/label_email"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_check_dup" />
+
+        <Button
+            android:id="@+id/btn_check_dup"
+            android:layout_width="140dp"
+            android:layout_height="56dp"
+            android:text="@string/action_check_dup"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:background="@drawable/bg_login_button"
+            android:backgroundTint="@null"
+            app:backgroundTint="@null"
+            android:stateListAnimator="@null"
+            app:layout_constraintTop_toTopOf="@id/et_email"
+            app:layout_constraintBottom_toBottomOf="@id/et_email"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 4) 비밀번호 라벨 -->
+        <TextView
+            android:id="@+id/label_password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="@string/label_password"
+            android:textColor="@color/loginTextDark"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            app:layout_constraintTop_toBottomOf="@id/et_email"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 5) 비밀번호 입력 -->
+        <EditText
+            android:id="@+id/et_password"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:inputType="textPassword"
+            android:imeOptions="actionNext"
+            android:singleLine="true"
+            android:background="@drawable/edittext_bg"
+            android:textColorHint="@color/fieldOutline"
+            android:hint="@string/hint_password"
+            app:layout_constraintTop_toBottomOf="@id/label_password"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 6) 비밀번호 확인 라벨 -->
+        <TextView
+            android:id="@+id/label_password_confirm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/label_password_confirm"
+            android:textColor="@color/loginTextDark"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            app:layout_constraintTop_toBottomOf="@id/et_password"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 7) 비밀번호 확인 입력 -->
+        <EditText
+            android:id="@+id/et_password_confirm"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:inputType="textPassword"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
+            android:background="@drawable/edittext_bg"
+            android:textColorHint="@color/fieldOutline"
+            android:hint="@string/hint_password_confirm"
+            app:layout_constraintTop_toBottomOf="@id/label_password_confirm"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 8) 비밀번호 불일치 경고 -->
+        <TextView
+            android:id="@+id/tv_pw_warning"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/warn_password_not_match"
+            android:textSize="13sp"
+            android:textColor="#D32F2F"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/et_password_confirm"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 9) 이용약관 및 개인정보 동의 -->
+        <CheckBox
+            android:id="@+id/cb_terms"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/label_terms_privacy"
+            android:textColor="@color/loginTextDark"
+            android:textSize="16sp"
+            android:buttonTint="@color/fieldOutline"
+            app:layout_constraintTop_toBottomOf="@id/tv_pw_warning"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 10) 가입하기 버튼 -->
+        <Button
+            android:id="@+id/btn_sign_up"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="28dp"
+            android:text="@string/action_sign_up_submit"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:enabled="false"
+            android:background="@drawable/bg_login_button"
+            android:backgroundTint="@null"
+            app:backgroundTint="@null"
+            android:stateListAnimator="@null"
+            app:layout_constraintTop_toBottomOf="@id/cb_terms"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

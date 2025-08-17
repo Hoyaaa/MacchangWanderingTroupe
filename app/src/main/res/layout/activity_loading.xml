@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/loading_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <!-- 가운데 정렬 컨테이너 -->
+    <LinearLayout
+        android:id="@+id/loading_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="24dp"
+        app:layout_constraintWidth_min="320dp"
+        app:layout_constraintWidth_max="560dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- 로고 (요구: logo_loding) -->
+        <ImageView
+            android:id="@+id/logo_loding"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/logo_loding" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="24dp" />
+
+        <TextView
+            android:id="@+id/loading_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loading...."
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#808080" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="16dp" />
+
+        <!-- 진행바 트랙 -->
+        <FrameLayout
+            android:id="@+id/progress_bar"
+            android:layout_width="300dp"
+            android:layout_height="12dp"
+            android:background="@drawable/bg_progress_track"
+            android:clipToPadding="true"
+            android:clipChildren="true">
+
+            <!-- 실제 게이지(가로 스케일 애니메이션) -->
+            <View
+                android:id="@+id/progress_bar_gauge"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_progress_gauge" />
+        </FrameLayout>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

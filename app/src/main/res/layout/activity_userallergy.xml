@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:padding="24dp">
+
+    <!-- 타이틀 -->
+    <TextView
+        android:id="@+id/ai_health_info_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:text="알레르기 음식"
+        android:textColor="#D2B0B0"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 서브 타이틀 -->
+    <TextView
+        android:id="@+id/tv_subtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="알레르기가 있거나 비선호 하는 음식을 선택해주세요."
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ai_health_info_title" />
+
+    <!-- 아이콘 그리드 -->
+    <GridLayout
+        android:id="@+id/grid_layout_allergy"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:columnCount="4"
+        android:rowCount="5"
+        android:useDefaultMargins="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_subtitle">
+
+        <!-- 1. 달걀 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_egg"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="달걀"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_egg" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="1.달걀\n(난류)"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 2. 우유 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_milk"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="우유"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_milk" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="2.우유"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 3. 메밀 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_buckwheat"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="메밀"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_buckwheat" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="3.메밀"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 4. 땅콩 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_peanut"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="땅콩"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_peanut" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="4.땅콩"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 5. 대두 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_soybean"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="대두"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_soybean" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="5. 대두"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 6. 밀 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_wheat"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="밀"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_wheat" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="6. 밀"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 7. 고등어 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_mackerel"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="고등어"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_fish" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="7. 고등어"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 8. 게 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_crab"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="게"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_crab" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="8. 게"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 9. 새우 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_shrimp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="새우"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_shrimp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="9. 새우"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 10. 돼지고기 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_pork"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="돼지고기"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_pork" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="10. 돼지고기"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 11. 복숭아 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_peach"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="복숭아"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_peach" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="11. 복숭아"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 12. 토마토 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_tomato"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="토마토"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_tomato" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="12. 토마토"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 13. 아황산류 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_sulfites"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="아황산류"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_sulfurousacid" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="13. 아황산류"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 14. 호두 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_walnut"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="호두"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_walnut" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="14. 호두"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 15. 닭고기 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_chicken"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="닭고기"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_chickin" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="15. 닭고기"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 16. 쇠고기 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_beef"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="쇠고기"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_beef" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="16. 쇠고기"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 17. 오징어 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_squid"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="오징어"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_squid" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="17. 오징어"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 18. 조개류 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_shellfish"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="조개류"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_clam" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="18. 조개류\n(굴, 전복, 홍합 포함)"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 19. 잣 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_pine_nut"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="잣"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_pinenut" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="19. 잣"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 20. 없음 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_none"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="없음"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@android:drawable/ic_menu_close_clear_cancel" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="20. 없음"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+    </GridLayout>
+
+    <!-- 저장 버튼 (요구사항: save_button) -->
+    <Button
+        android:id="@+id/save_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="60dp"
+        android:backgroundTint="#83827A"
+        android:paddingStart="40dp"
+        android:paddingEnd="40dp"
+        android:text="저장"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

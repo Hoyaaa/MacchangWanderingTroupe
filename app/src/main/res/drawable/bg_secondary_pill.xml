@@ -1,0 +1,5 @@
+<!-- res/drawable/bg_secondary_pill.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#EDD8D8" />
+    <corners android:radius="12dp" />
+</shape>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="loginTextDark">#555555</color>
+    <color name="fieldOutline">#8B8B85</color>          <!-- 기본 테두리 -->
+    <color name="fieldOutlineFocused">#6E6E69</color>   <!-- 포커스 시 테두리 -->
+    <color name="fieldBg">#00FFFFFF</color>            <!-- 투명(배경 없음) -->
+    <color name="loginPrimary">#D2B0B0</color>         <!-- 로그인 버튼 -->
+    <color name="loginPrimaryPressed">#C39C9C</color>  <!-- 버튼 눌림 -->
+    <color name="your_primary_color">#FF6200EE</color> <color name="your_primary_dark_color">#FF3700B3</color> <color name="your_on_primary_color">#FFFFFFFF</color> <color name="your_secondary_color">#FF03DAC5</color> <color name="your_secondary_dark_color">#FF018786</color> <color name="your_on_secondary_color">#FF000000</color>
+    <color name="brandPrimary">#D2B0B0</color>     <!-- 버튼 기본색 -->
+    <color name="brandSecondary">#EDD8D8</color>  <!-- 연한 분리 라인 -->
+
+
+
+
+
+</resources>

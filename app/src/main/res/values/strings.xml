@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Aihealth</string>
+    <string name="default_web_client_id">768805432665-2j8hr2s0c8no3np4ll0109miij0h581m.apps.googleusercontent.com</string>
+    <string name="label_email">이메일 주소</string>
+    <string name="label_password">비밀번호</string>
+    <string name="action_login">로그인</string>
+    <string name="action_sign_up">회원가입</string>
+    <string name="action_find_id">아이디 찾기</string>
+    <string name="action_find_pw">비밀번호 찾기</string>
+    <string name="desc_google_login">구글 계정으로 로그인</string>
+    <string name="action_check_dup">중복 확인</string>
+    <string name="label_password_confirm">비밀번호 확인</string>
+    <string name="hint_email">이메일 주소를 입력하세요.</string>
+    <string name="hint_password">비밀번호를 입력하세요.</string>
+    <string name="hint_password_confirm">비밀번호를 다시 입력하세요.</string>
+    <string name="warn_password_not_match">비밀번호가 일치하지 않습니다.</string>
+    <string name="label_terms_privacy">이용약관 및 개인정보 동의</string>
+    <string name="action_sign_up_submit">가입하기</string>
+</resources>

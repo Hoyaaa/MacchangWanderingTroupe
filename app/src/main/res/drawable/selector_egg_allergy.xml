@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <layer-list>
+            <item android:drawable="@drawable/ic_egg" />
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="#334CAF50" /> <corners android:radius="8dp"/> </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <item android:drawable="@drawable/ic_egg" />
+</selector>

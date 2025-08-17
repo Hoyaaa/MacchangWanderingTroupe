@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:interpolator/decelerate_quad">
+
+    <!-- 가로로 차오르는 효과 -->
+    <scale
+        android:fromXScale="0.0"
+        android:toXScale="1.0"
+        android:fromYScale="1.0"
+        android:toYScale="1.0"
+        android:pivotX="0%"
+        android:pivotY="50%"
+        android:duration="1600"
+        android:repeatCount="infinite"
+        android:repeatMode="restart" />
+
+    <!-- 페이드 인/아웃 (0→1→0) -->
+    <alpha
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0"
+        android:duration="1100"
+        android:repeatCount="infinite"
+        android:repeatMode="restart" />
+
+    <alpha
+        android:fromAlpha="1.0"
+        android:toAlpha="0.0"
+        android:startOffset="1100"
+        android:duration="500"
+        android:repeatCount="infinite"
+        android:repeatMode="restart" />
+</set>
