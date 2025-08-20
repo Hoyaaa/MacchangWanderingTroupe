@@ -169,14 +169,17 @@ class ProfileActivity : AppCompatActivity() {
                 "age_man_years" to ageMan
             )
 
-            db.collection("usercode").document(email!!)
+            val em = email!!  // 이미 onCreate에서 널 체크함
+
+            db.collection("usercode").document(em)
                 .set(map, SetOptions.merge())
                 .addOnSuccessListener {
                     toast("프로필이 저장되었습니다.")
-                    // ✅ 저장 성공 후 로딩 화면으로 이동 (로딩에서 5초 후 MainActivity)
+                    // ✅ 로딩 화면으로 이동: 분석 모드 + 이메일 전달
                     startActivity(
                         Intent(this, LoadingActivity::class.java).apply {
-                            putExtra("user_email", email)
+                            putExtra("mode", "analyze")
+                            putExtra("user_email", em)
                         }
                     )
                     finish()
@@ -185,6 +188,7 @@ class ProfileActivity : AppCompatActivity() {
                     toast("프로필 저장 실패: ${e.message}")
                 }
         }
+
 
         // 초기 버튼 스타일
         refreshConfirmButtonStyle()

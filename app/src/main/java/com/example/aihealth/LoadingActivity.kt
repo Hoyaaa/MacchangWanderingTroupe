@@ -13,27 +13,25 @@ import com.google.firebase.firestore.FirebaseFirestore
 import org.mindrot.jbcrypt.BCrypt
 
 /**
- * LoadingActivity.kt (최종본, Kotlin)
+ * LoadingActivity.kt (최종본)
  *
  * - mode = "loginCheck" : 로그인 검증 수행
- *     · 문서 없음  → "등록된 회원이 아닙니다." 토스트 후 finish() (로그인 화면으로 복귀)
- *     · 비번 불일치 → "올바른 비밀번호가 아닙니다." 토스트 후 finish()
- *     · 성공       → 3초 뒤 MainActivity 로 이동
- *
- * - mode 가 없거나 그 외 : 회원가입/일반 진입 → 5초 뒤 MainActivity 로 이동
+ * - mode = "analyze"    : Firestore 사용자 프로필을 불러 분석 후 결과 화면으로 이동
+ * - 그 외/없음           : 기본(회원가입 등) → 5초 뒤 메인으로
  */
 class LoadingActivity : AppCompatActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private val DELAY_SIGNUP_MS = 5_000L      // 회원가입 완료 후 5초
-    private val DELAY_LOGIN_OK_MS = 3_000L    // 로그인 성공 시 3초
+    private val DELAY_SIGNUP_MS    = 5_000L  // 회원가입/일반 진입 딜레이
+    private val DELAY_LOGIN_OK_MS  = 3_000L  // 로그인 성공 후 딜레이
+    private val DELAY_ANALYZE_MS   = 1_800L  // 분석 완료 후 결과 화면으로 넘길 때 살짝 보여줄 시간
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_loading)
 
-        // 게이지 애니메이션 시작
+        // 로딩 애니메이션 시작
         findViewById<View>(R.id.progress_bar_gauge)?.startAnimation(
             AnimationUtils.loadAnimation(this, R.anim.loading_gauge)
         )
@@ -42,8 +40,11 @@ class LoadingActivity : AppCompatActivity() {
 
         when (intent.getStringExtra("mode")) {
             "loginCheck" -> doLoginCheck()
-            else -> startMainAfterDelay(DELAY_SIGNUP_MS, null) // 기본 5초 딜레이
+            "analyze"    -> doAnalyze()
+            null         -> startMainAfterDelay(DELAY_SIGNUP_MS, null)  // null 분기 처리
+            else         -> startMainAfterDelay(DELAY_SIGNUP_MS, null)  // 나머지
         }
+
     }
 
     /** 로그인 검증: Firestore의 usercode/{email} 문서 확인 */
@@ -77,7 +78,6 @@ class LoadingActivity : AppCompatActivity() {
 
                 val ok = try { BCrypt.checkpw(password, hash) } catch (_: Exception) { false }
                 if (ok) {
-                    // 로그인 성공 → 3초 후 메인으로
                     startMainAfterDelay(DELAY_LOGIN_OK_MS, email)
                 } else {
                     toast("올바른 비밀번호가 아닙니다.")
@@ -86,6 +86,66 @@ class LoadingActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e ->
                 toast("로그인 오류: ${e.message}")
+                finish()
+            }
+    }
+
+    /** ✅ Firestore에서 프로필을 읽고 HealthAnalyzer로 분석 → 결과 화면으로 이동 */
+    private fun doAnalyze() {
+        val email = intent.getStringExtra("user_email") ?: run {
+            toast("사용자 정보가 없습니다.")
+            finish()
+            return
+        }
+
+        FirebaseFirestore.getInstance()
+            .collection("usercode").document(email)
+            .get()
+            .addOnSuccessListener { snap ->
+                if (!snap.exists()) {
+                    toast("프로필이 없습니다.")
+                    finish()
+                    return@addOnSuccessListener
+                }
+
+                val h   = snap.getLong("height_cm")?.toInt()
+                val w   = snap.getDouble("weight_kg") ?: snap.getLong("weight_kg")?.toDouble()
+                val age = (snap.getLong("age_man_years") ?: snap.getLong("age_years"))?.toInt()
+
+                // 성별 필드가 있다면 사용 (없으면 null)
+                val sexStr = snap.getString("sex")?.lowercase()
+                val isMale = when (sexStr) {
+                    "male", "m", "남", "남자"   -> true
+                    "female", "f", "여", "여자" -> false
+                    else -> null
+                }
+
+                if (h == null || w == null || age == null) {
+                    toast("키/몸무게/나이 정보가 부족합니다.")
+                    finish()
+                    return@addOnSuccessListener
+                }
+
+                val result = HealthAnalyzer.analyze(
+                    HealthAnalyzer.AnalysisInput(
+                        heightCm = h,
+                        weightKg = w,
+                        ageYears = age,
+                        isMale   = isMale
+                    )
+                )
+
+                // 로딩 애니메이션이 보이도록 약간의 지연 후 결과 화면으로
+                handler.postDelayed({
+                    startActivity(Intent(this, HealthAnalysisActivity::class.java).apply {
+                        putExtra("user_email", email)
+                        putExtra("analysis_result", result)
+                    })
+                    finish()
+                }, DELAY_ANALYZE_MS)
+            }
+            .addOnFailureListener { e ->
+                toast("분석 실패: ${e.message}")
                 finish()
             }
     }

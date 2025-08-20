@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  마이페이지 화면 (XML View)
+  - 상단: 뒤로가기, 제목
+  - 계정: 제공자 아이콘(G), 로그인 이메일, 설정 아이콘
+  - 신체 정보: 키/몸무게/나이 표시 + 연필 아이콘(편집)
+  - 건강 분석: 미만/정상/초과 라벨 + 3개 막대(체중/체지방량/BMI) + 지시자 + 연필 아이콘(편집)
+  - 질병 정보: 질병 리스트 + 연필 아이콘(편집)
+  - 폭 350dp 그리드 유지(기존 화면과 일관)
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mypage_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/ai_white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mypage_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="28dp">
+
+        <!-- 헤더: 뒤로가기 + 타이틀 -->
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_back_24"
+            android:contentDescription="뒤로가기"
+            app:tint="@color/brandSecondary"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="20dp" />
+
+        <TextView
+            android:id="@+id/tv_header_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="마이페이지"
+            android:textColor="@color/ai_text"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/btn_back"
+            app:layout_constraintTop_toTopOf="@id/btn_back"
+            android:layout_marginStart="8dp" />
+
+        <!-- 계정 블록: 제공자 아이콘 + 이메일 + 설정아이콘 -->
+        <ImageView
+            android:id="@+id/iv_provider"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_marginTop="28dp"
+            android:src="@drawable/ic_google"
+        app:layout_constraintTop_toBottomOf="@id/btn_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="로그인한 사용자의 계정 이메일"
+            android:textColor="@color/fieldOutline"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/iv_provider"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/btn_account_settings"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="6dp"
+            android:src="@drawable/ic_settings_24"
+            android:contentDescription="계정 설정"
+            app:tint="@color/fieldOutline"
+            app:layout_constraintStart_toEndOf="@id/tv_email"
+            app:layout_constraintTop_toTopOf="@id/tv_email"
+            app:layout_constraintBottom_toBottomOf="@id/tv_email" />
+
+        <!-- 구분선 -->
+        <View
+            android:id="@+id/divider_top"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/brandSecondary"
+            app:layout_constraintTop_toBottomOf="@id/tv_email"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 섹션: 신체 정보 -->
+        <TextView
+            android:id="@+id/section_body_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="신체 정보"
+            android:textColor="@color/ai_text"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            app:layout_constraintTop_toBottomOf="@id/divider_top"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/btn_edit_body"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/ic_edit_black_24"
+            android:contentDescription="신체 정보 편집"
+            app:tint="@color/fieldOutline"
+            app:layout_constraintStart_toEndOf="@id/section_body_title"
+            app:layout_constraintTop_toTopOf="@id/section_body_title"
+            app:layout_constraintBottom_toBottomOf="@id/section_body_title"
+            android:layout_marginStart="6dp" />
+
+        <!-- 키/몸무게/나이 행 (350dp 고정폭, 라벨 pill + 값) -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/row_height"
+            android:layout_width="350dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/section_body_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/pill_height"
+                android:layout_width="56dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_tag_pill"
+                android:gravity="center"
+                android:paddingVertical="8dp"
+                android:text="키"
+                android:textColor="@color/ai_text"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_height_val"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="170cm"
+                android:textColor="@color/ai_text"
+                android:textSize="16sp"
+                app:layout_constraintStart_toEndOf="@id/pill_height"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/pill_height"
+                app:layout_constraintBottom_toBottomOf="@id/pill_height"
+                android:layout_marginStart="16dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/row_weight"
+            android:layout_width="350dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/row_height"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/pill_weight"
+                android:layout_width="72dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_tag_pill"
+                android:gravity="center"
+                android:paddingVertical="8dp"
+                android:text="몸무게"
+                android:textColor="@color/ai_text"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_weight_val"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="67.2kg"
+                android:textColor="@color/ai_text"
+                android:textSize="16sp"
+                app:layout_constraintStart_toEndOf="@id/pill_weight"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/pill_weight"
+                app:layout_constraintBottom_toBottomOf="@id/pill_weight"
+                android:layout_marginStart="16dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/row_age"
+            android:layout_width="350dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/row_weight"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/pill_age"
+                android:layout_width="56dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_tag_pill"
+                android:gravity="center"
+                android:paddingVertical="8dp"
+                android:text="나이"
+                android:textColor="@color/ai_text"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_age_val"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="18(만)세"
+                android:textColor="@color/ai_text"
+                android:textSize="16sp"
+                app:layout_constraintStart_toEndOf="@id/pill_age"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/pill_age"
+                app:layout_constraintBottom_toBottomOf="@id/pill_age"
+                android:layout_marginStart="16dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- 구분선 -->
+        <View
+            android:id="@+id/divider_mid"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="18dp"
+            android:background="@color/brandSecondary"
+            app:layout_constraintTop_toBottomOf="@id/row_age"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 섹션: 건강 분석 -->
+        <TextView
+            android:id="@+id/section_health_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="건강 분석"
+            android:textColor="@color/ai_text"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            app:layout_constraintTop_toBottomOf="@id/divider_mid"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- 미만/정상/초과 라벨 (가운데 정렬, 350dp) -->
+        <LinearLayout
+            android:id="@+id/label_ranges"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/section_health_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/tv_low"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="미만"
+                android:textColor="@color/ai_text"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/tv_normal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="정상"
+                android:textColor="@color/ai_text"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/tv_high"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="초과"
+                android:textColor="@color/ai_text"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+        <!-- 체중 바 -->
+        <TextView
+            android:id="@+id/tv_weight_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="체중"
+            android:textColor="@color/ai_text"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/label_ranges"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <LinearLayout
+            android:id="@+id/bar_weight"
+            android:layout_width="350dp"
+            android:layout_height="32dp"
+            android:orientation="horizontal"
+            android:background="@color/ai_gray"
+            android:padding="1dp"
+            android:clipToPadding="false"
+            app:layout_constraintTop_toTopOf="@id/tv_weight_label"
+            app:layout_constraintBottom_toBottomOf="@id/tv_weight_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/bg_segment_left"/>
+            <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/bg_segment_center"/>
+            <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/bg_segment_right"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_weight_marker"
+            android:layout_width="16dp"
+            android:layout_height="10dp"
+            android:src="@drawable/ic_indicator_down"
+            android:contentDescription="체중 지시자"
+            app:layout_constraintBottom_toTopOf="@+id/bar_weight"
+            app:layout_constraintStart_toStartOf="@+id/bar_weight"
+            app:layout_constraintEnd_toEndOf="@+id/bar_weight"
+            app:layout_constraintHorizontal_bias="0.5"/>
+
+        <!-- 체지방 바 -->
+        <TextView
+            android:id="@+id/tv_fat_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="체지방량"
+            android:textColor="@color/ai_text"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@+id/bar_weight"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <LinearLayout
+            android:id="@+id/bar_fat"
+            android:layout_width="350dp"
+            android:layout_height="32dp"
+            android:orientation="horizontal"
+            android:background="@color/ai_gray"
+            android:padding="1dp"
+            android:clipToPadding="false"
+            app:layout_constraintTop_toTopOf="@id/tv_fat_label"
+            app:layout_constraintBottom_toBottomOf="@id/tv_fat_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/bg_segment_left"/>
+            <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/bg_segment_center"/>
+            <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/bg_segment_right"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_fat_marker"
+            android:layout_width="16dp"
+            android:layout_height="10dp"
+            android:src="@drawable/ic_indicator_down"
+            android:contentDescription="체지방 지시자"
+            app:layout_constraintBottom_toTopOf="@+id/bar_fat"
+            app:layout_constraintStart_toStartOf="@+id/bar_fat"
+            app:layout_constraintEnd_toEndOf="@+id/bar_fat"
+            app:layout_constraintHorizontal_bias="0.5"/>
+
+        <!-- BMI 바 -->
+        <TextView
+            android:id="@+id/tv_bmi_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BMI"
+            android:textColor="@color/ai_text"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@+id/bar_fat"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <LinearLayout
+            android:id="@+id/bar_bmi"
+            android:layout_width="350dp"
+            android:layout_height="32dp"
+            android:orientation="horizontal"
+            android:background="@color/ai_gray"
+            android:padding="1dp"
+            android:clipToPadding="false"
+            app:layout_constraintTop_toTopOf="@id/tv_bmi_label"
+            app:layout_constraintBottom_toBottomOf="@id/tv_bmi_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/bg_segment_left"/>
+            <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/bg_segment_center"/>
+            <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/bg_segment_right"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_bmi_marker"
+            android:layout_width="16dp"
+            android:layout_height="10dp"
+            android:src="@drawable/ic_indicator_down"
+            android:contentDescription="BMI 지시자"
+            app:layout_constraintBottom_toTopOf="@+id/bar_bmi"
+            app:layout_constraintStart_toStartOf="@+id/bar_bmi"
+            app:layout_constraintEnd_toEndOf="@+id/bar_bmi"
+            app:layout_constraintHorizontal_bias="0.5"/>
+
+        <!-- 구분선 -->
+        <View
+            android:id="@+id/divider_bottom"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="18dp"
+            android:background="@color/brandSecondary"
+            app:layout_constraintTop_toBottomOf="@id/bar_bmi"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 섹션: 질병 정보 -->
+        <TextView
+            android:id="@+id/section_disease_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="질병 정보"
+            android:textColor="@color/ai_text"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            app:layout_constraintTop_toBottomOf="@id/divider_bottom"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/btn_edit_disease"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/ic_edit_black_24"
+            android:contentDescription="질병 정보 편집"
+            app:tint="@color/fieldOutline"
+            app:layout_constraintStart_toEndOf="@id/section_disease_title"
+            app:layout_constraintTop_toTopOf="@id/section_disease_title"
+            app:layout_constraintBottom_toBottomOf="@id/section_disease_title"
+            android:layout_marginStart="6dp" />
+
+        <TextView
+            android:id="@+id/tv_disease_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="당뇨, 신장암"
+            android:textColor="@color/ai_text"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/section_disease_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

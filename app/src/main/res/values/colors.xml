@@ -17,8 +17,28 @@
     <color name="brandPrimary">#D2B0B0</color>     <!-- 버튼 기본색 -->
     <color name="brandSecondary">#EDD8D8</color>  <!-- 연한 분리 라인 -->
 
+    <!-- 텍스트/버튼 컬러 -->
+    <color name="ai_text">#605E5E</color>
+    <!-- 3분할 바 색상 -->
+    <color name="ai_low">#D2C6B0</color>     <!-- 미만 -->
+    <color name="ai_normal">#B3D2B0</color>  <!-- 정상 -->
+    <color name="ai_high">#D2B0B0</color>    <!-- 초과 -->
+    <!-- 보조 색 -->
+    <color name="ai_gray">#D9D9D9</color>    <!-- 구분선/아이콘/트랙 -->
+    <color name="ai_white">#FFFFFFFF</color>
+    <!-- 알림 카드의 아주 연한 배경(초과색을 톤다운) -->
+    <color name="ai_notice_bg">#FFF6EEEE</color>
 
+    <color name="pink_300">#D9B9B9</color>   <!-- 탑바 포인트/버튼 -->
+    <color name="pink_200">#EFDAD9</color>   <!-- 말풍선 배경 -->
+    <color name="pink_100">#F6E9E8</color>   <!-- 세그먼트/버튼 음영 -->
 
+    <color name="gray_50">#FFF6F6F6</color>
+    <color name="gray_200">#FFDDDDDD</color>
+    <color name="gray_400">#FFBDBDBD</color>
 
+    <color name="text_primary">#555555</color>
+    <color name="text_secondary">#6B6B6B</color>
+    <color name="tab_bg">#ECECEC</color>
 
 </resources>
