@@ -1,71 +1,179 @@
+// LoginActivity.java
 package com.example.aihealth;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Patterns;
-import android.widget.Button;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 public class LoginActivity extends AppCompatActivity {
 
     private EditText etEmail, etPassword;
     private Button btnLogin;
-    private TextView tvSignUp, tvFindId, tvFindPw;
+    private View btnGoogle;       // MaterialButton or SignInButton 등 어떤 위젯이든 OK
+    private TextView tvSignUp;    // "회원가입" 이동 텍스트/버튼
+    private ProgressBar progress;
+
+    private FirebaseAuth auth;
+    private GoogleSignInClient googleClient;
+
+    private final ActivityResultLauncher<Intent> googleLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    this::onGoogleResult);
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        etEmail    = findViewById(R.id.et_email);
-        etPassword = findViewById(R.id.et_password);
-        btnLogin   = findViewById(R.id.btn_login);
+        auth = FirebaseAuth.getInstance();
 
-        // ✅ 회원가입 이동 복구: tv_sign_up 클릭 → SignActivity
-        tvSignUp   = findViewById(R.id.tv_sign_up);
-        tvSignUp.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, SignActivity.class);
-            startActivity(intent);
-        });
+        etEmail   = findViewById(R.id.et_email);
+        etPassword= findViewById(R.id.et_password);
+        btnLogin  = findViewById(R.id.btn_login);
+        btnGoogle = findViewById(R.id.btn_google_sign_in); // 없으면 null일 수 있음
+        tvSignUp  = findViewById(R.id.tv_sign_up);
+        progress  = findViewById(R.id.progress);
 
-        // 선택: 아이디/비번 찾기 뷰가 있다면 바인딩만 유지
-        tvFindId = findViewById(R.id.tv_find_id);
-        tvFindPw = findViewById(R.id.tv_find_pw);
+        btnLogin.setOnClickListener(v -> doEmailLogin());
+        if (btnGoogle != null) btnGoogle.setOnClickListener(v -> doGoogleLogin());
+        if (tvSignUp != null)  tvSignUp.setOnClickListener(v ->
+                startActivity(new Intent(this, SignActivity.class)));
 
-        // 로그인 버튼 → LoadingActivity로 위임하여 Firestore 검증
-        btnLogin.setOnClickListener(v -> {
-            String email = String.valueOf(etEmail.getText()).trim();
-            String password = String.valueOf(etPassword.getText());
-
-            if (TextUtils.isEmpty(email)) {
-                toast("이메일을 입력해 주세요.");
-                return;
-            }
-            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                toast("올바른 이메일 형식이 아닙니다.");
-                return;
-            }
-            if (TextUtils.isEmpty(password)) {
-                toast("비밀번호를 입력해 주세요.");
-                return;
-            }
-
-            Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
-            intent.putExtra("mode", "loginCheck"); // ← 로딩에서 로그인 검증
-            intent.putExtra("email", email);
-            intent.putExtra("password", password);
-            startActivity(intent);
-            // 실패 시 LoadingActivity가 finish()되며 로그인 화면으로 자동 복귀
-        });
+        // Google 로그인 클라이언트 (Firebase 사용 시 Web client ID 필요)
+        try {
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(getString(R.string.default_web_client_id))
+                    .requestEmail()
+                    .build();
+            googleClient = GoogleSignIn.getClient(this, gso);
+        } catch (Exception ignore) {
+            googleClient = null; // strings.xml 미설정 시 null 허용
+        }
     }
 
-    private void toast(String s) {
-        Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
+    private void doEmailLogin() {
+        String email = safe(etEmail);
+        String pw    = safe(etPassword);
+
+        if (email.isEmpty() || pw.isEmpty()) {
+            toast("이메일/비밀번호를 입력하세요.");
+            return;
+        }
+
+        setLoading(true);
+        auth.signInWithEmailAndPassword(email, pw)
+                .addOnSuccessListener(result -> {
+                    String finalEmail = email;
+                    FirebaseUser user = auth.getCurrentUser();
+                    if (user != null && user.getEmail() != null) finalEmail = user.getEmail();
+                    goMain(finalEmail);
+                })
+                .addOnFailureListener(e -> {
+                    toast("로그인 실패: " + e.getMessage());
+                    setLoading(false);
+                });
+    }
+
+    private void doGoogleLogin() {
+        if (googleClient == null) {
+            toast("Google 로그인 설정이 완성되지 않았습니다.");
+            return;
+        }
+        googleLauncher.launch(googleClient.getSignInIntent());
+    }
+
+    private void onGoogleResult(ActivityResult result) {
+        if (result.getResultCode() != RESULT_OK || result.getData() == null) {
+            toast("구글 로그인 취소");
+            return;
+        }
+        setLoading(true);
+        try {
+            GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(result.getData())
+                    .getResult(ApiException.class);
+
+            if (account == null) {
+                setLoading(false);
+                toast("구글 계정 정보를 불러오지 못했습니다.");
+                return;
+            }
+
+            AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+            auth.signInWithCredential(credential)
+                    .addOnSuccessListener(cred -> {
+                        String email = account.getEmail();
+                        if (email == null && auth.getCurrentUser() != null) {
+                            email = auth.getCurrentUser().getEmail();
+                        }
+                        goMain(email);
+                    })
+                    .addOnFailureListener(e -> {
+                        toast("구글 로그인 실패: " + e.getMessage());
+                        setLoading(false);
+                    });
+
+        } catch (ApiException e) {
+            setLoading(false);
+            toast("구글 로그인 실패: " + e.getMessage());
+        }
+    }
+
+    // ===== 공통 유틸 =====
+
+    private void goMain(@Nullable String email) {
+        if (email != null && !email.trim().isEmpty()) {
+            saveLastEmail(email);
+        }
+        Intent i = new Intent(this, MainActivity.class);
+        if (email != null && !email.trim().isEmpty()) {
+            i.putExtra("user_email", email.trim()); // ✅ MainActivity로 이메일 전달
+        }
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+        finish();
+    }
+
+    private void saveLastEmail(@NonNull String email) {
+        getSharedPreferences("auth", MODE_PRIVATE)
+                .edit()
+                .putString("last_email", email.trim())  // ✅ 로컬 저장
+                .apply();
+    }
+
+    private void setLoading(boolean loading) {
+        if (progress != null) progress.setVisibility(loading ? View.VISIBLE : View.GONE);
+        if (btnLogin != null)  btnLogin.setEnabled(!loading);
+        if (btnGoogle != null) btnGoogle.setEnabled(!loading);
+        if (tvSignUp != null)  tvSignUp.setEnabled(!loading);
+    }
+
+    private String safe(EditText et) {
+        return et == null || et.getText() == null ? "" : et.getText().toString().trim();
+    }
+
+    private void toast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 }

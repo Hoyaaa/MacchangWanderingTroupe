@@ -27,8 +27,8 @@
         <!-- 헤더: 뒤로가기 + 타이틀 -->
         <ImageView
             android:id="@+id/btn_back"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@drawable/ic_arrow_back_24"
             android:contentDescription="뒤로가기"
             app:tint="@color/brandSecondary"
@@ -131,7 +131,7 @@
 
             <TextView
                 android:id="@+id/pill_height"
-                android:layout_width="56dp"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_tag_pill"
                 android:gravity="center"
@@ -169,7 +169,7 @@
 
             <TextView
                 android:id="@+id/pill_weight"
-                android:layout_width="72dp"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_tag_pill"
                 android:gravity="center"
@@ -207,7 +207,7 @@
 
             <TextView
                 android:id="@+id/pill_age"
-                android:layout_width="56dp"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_tag_pill"
                 android:gravity="center"

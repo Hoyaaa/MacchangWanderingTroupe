@@ -8,80 +8,110 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.FirebaseAuth
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-/**
- * 기능 개요
- * - activity_main.xml과 연결되는 메인 액티비티.
- * - 오늘 날짜(대한민국/Asia-Seoul) 표시.
- * - 사용자 건강 분석 결과(인텐트 "analysis_result" 또는 Firestore 조회)를 이용해
- *   - 말풍선 텍스트(tv_health_ment) 갱신
- *   - 캐릭터 이미지(img_character) 상태별 교체
- *
- * 인텐트 입력
- * - "user_email": String (Firestore에서 가져올 때 필요)
- * - "analysis_result": HealthAnalyzer.AnalysisResult (이미 계산된 결과가 있을 때)
- *
- * 참고
- * - HealthAnalyzer.analyze(...)가 반환하는 messageBody를 말풍선에 사용합니다.
- * - AnalysisResult 필드(bmiGauge/weightGauge/fatGauge/messageBody 등)를 그대로 활용합니다.
- */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var tvToday: TextView
     private lateinit var tvHealthMent: TextView
     private lateinit var imgCharacter: ImageView
     private lateinit var btnMyPage: ImageButton
+    private lateinit var btnTodayMenu: MaterialButton
+
+    // 현재 사용자 이메일(의도적으로 nullable)
+    private var userEmail: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        // 1) 뷰 바인딩
-        tvToday       = findViewById(R.id.tv_today)
-        tvHealthMent  = findViewById(R.id.tv_health_ment)   // 말풍선 텍스트(가운데 정렬/자동 줄바꿈 XML 설정됨)
-        imgCharacter  = findViewById(R.id.img_character)    // 상황별 PNG 교체 대상
-        btnMyPage     = findViewById(R.id.btn_mypage)
-
         FirebaseApp.initializeApp(this)
 
-        // 2) 오늘 날짜(대한민국 표준시)
+        tvToday      = findViewById(R.id.tv_today)
+        tvHealthMent = findViewById(R.id.tv_health_ment)
+        imgCharacter = findViewById(R.id.img_character)
+        btnMyPage    = findViewById(R.id.btn_mypage)
+        btnTodayMenu = findViewById(R.id.btn_today_menu)
+
+        // 오늘 날짜
         val seoul = ZoneId.of("Asia/Seoul")
         val today = LocalDate.now(seoul)
         tvToday.text = today.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
 
-
+        // 마이페이지
         btnMyPage.setOnClickListener {
-            // MyPageActivity로 이동
-            val intent = Intent(this, MyPageActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, MyPageActivity::class.java))
         }
 
+        // ✅ 이메일 해석: Intent → FirebaseAuth → SharedPreferences
+        userEmail = resolveUserEmail()
+        // 마지막으로 알아낸 이메일은 저장(다음 앱 재실행 대비)
+        userEmail?.let { saveLastEmail(it) }
 
-        // 4) 분석 결과 적용
-        //    - 인텐트로 AnalysisResult가 오면 그대로 사용
-        //    - 없으면 Firestore에서 읽어 HealthAnalyzer.analyze(...) 수행
+        // 오늘의 식단 페이지로 이동할 때도 항상 이메일을 싣는다
+        btnTodayMenu.setOnClickListener {
+            startActivity(Intent(this, TodayMenuActivity::class.java).apply {
+                userEmail?.let { putExtra("user_email", it) }
+            })
+        }
+
+        // 분석 결과를 넘겨받았으면 그대로 표시, 아니면 Firestore에서 읽어 분석
         val passed = intent.getSerializableExtra("analysis_result") as? HealthAnalyzer.AnalysisResult
         if (passed != null) {
             applyResultToMain(passed)
         } else {
-            val email = intent.getStringExtra("user_email")
+            val email = userEmail
             if (email.isNullOrBlank()) {
-                toast("사용자 정보가 없습니다.")
+                toast("로그인 정보가 없어 로그인 화면으로 이동합니다.")
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
                 return
             }
             fetchAndAnalyzeFromFirestore(email)
         }
     }
 
+    /** Intent, FirebaseAuth, SharedPreferences 순으로 사용자 이메일을 찾아 반환 */
+    private fun resolveUserEmail(): String? {
+        // 1) Intent
+        intent.getStringExtra("user_email")
+            ?.trim()
+            ?.takeIf { it.isNotBlank() }
+            ?.let { return it }
+
+        // 2) FirebaseAuth
+        FirebaseAuth.getInstance().currentUser?.email
+            ?.trim()
+            ?.takeIf { it.isNotBlank() }
+            ?.let { return it }
+
+        // 3) SharedPreferences
+        getSharedPreferences("auth", MODE_PRIVATE)
+            .getString("last_email", null)
+            ?.trim()
+            ?.takeIf { it.isNotBlank() }
+            ?.let { return it }
+
+        return null
+    }
+
+    private fun saveLastEmail(email: String) {
+        getSharedPreferences("auth", MODE_PRIVATE)
+            .edit()
+            .putString("last_email", email.trim())
+            .apply()
+    }
+
     /** Firestore에서 사용자 프로필을 읽어 분석 후 반영 */
     private fun fetchAndAnalyzeFromFirestore(email: String) {
         FirebaseFirestore.getInstance()
-            .collection("usercode").document(email)
+            .collection("usercode")
+            .document(email.trim()) // ✅ 공백·대소문자 안전
             .get()
             .addOnSuccessListener { snap ->
                 if (!snap.exists()) {
@@ -89,14 +119,14 @@ class MainActivity : AppCompatActivity() {
                     return@addOnSuccessListener
                 }
 
-                val h = snap.getLong("height_cm")?.toInt()
-                val w = snap.getDouble("weight_kg") ?: snap.getLong("weight_kg")?.toDouble()
+                val h   = snap.getLong("height_cm")?.toInt()
+                val w   = snap.getDouble("weight_kg") ?: snap.getLong("weight_kg")?.toDouble()
                 val age = (snap.getLong("age_man_years") ?: snap.getLong("age_years"))?.toInt()
 
                 val sexStr = snap.getString("sex")?.lowercase()
                 val isMale = when (sexStr) {
-                    "male", "m", "남", "남자" -> true
-                    "female", "f", "여", "여자" -> false
+                    "male","m","남","남자"   -> true
+                    "female","f","여","여자" -> false
                     else -> null
                 }
 
@@ -122,13 +152,8 @@ class MainActivity : AppCompatActivity() {
 
     /** 결과를 메인 화면에 반영 (멘트/캐릭터 교체) */
     private fun applyResultToMain(r: HealthAnalyzer.AnalysisResult) {
-        // 말풍선 텍스트: HealthAnalyzer가 생성한 본문 사용
-        tvHealthMent.text = r.messageBody   //
+        tvHealthMent.text = r.messageBody
 
-        // 캐릭터 이미지 매핑 규칙
-        // - HIGH가 하나라도 있으면: 관리 필요(운동 자극) → dumbbell 캐릭터
-        // - 모두 NORMAL이면: 균형 양호 → 물+브로콜리 캐릭터
-        // - 그 외(LOW 포함/혼재): 영양 보충 필요 → 눈물/속상 캐릭터
         val hasHigh   = (r.bmiGauge.zone == HealthAnalyzer.Zone.HIGH) ||
                 (r.fatGauge.zone == HealthAnalyzer.Zone.HIGH) ||
                 (r.weightGauge.zone == HealthAnalyzer.Zone.HIGH)
@@ -137,9 +162,9 @@ class MainActivity : AppCompatActivity() {
                 (r.weightGauge.zone == HealthAnalyzer.Zone.NORMAL)
 
         val drawableRes = when {
-            hasHigh   -> R.drawable.char_dumbbell_broccoli   // 이미지1 (운동+브로콜리)
-            allNormal -> R.drawable.char_water_broccoli      // 이미지4 (물병+브로콜리)
-            else      -> R.drawable.char_sad_leaf            // 이미지3 (눈물)
+            hasHigh   -> R.drawable.char_dumbbell_broccoli
+            allNormal -> R.drawable.char_water_broccoli
+            else      -> R.drawable.char_sad_leaf
         }
         imgCharacter.setImageResource(drawableRes)
     }

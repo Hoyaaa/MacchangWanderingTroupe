@@ -1,100 +1,91 @@
 plugins {
-    id("com.google.gms.google-services") // Firebase 서비스 사용
-    alias(libs.plugins.android.application) // 안드로이드 애플리케이션 플러그인
-    alias(libs.plugins.kotlin.android) // Kotlin 안드로이드 플러그인
-    alias(libs.plugins.kotlin.compose) // Compose 플러그인
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
     id("kotlin-parcelize")
-    id("kotlin-kapt") // 추가
-
+    id("com.google.gms.google-services")
 }
 
 android {
     namespace = "com.example.aihealth"
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.aihealth"
-        minSdk = 31
-        targetSdk = 36
+        minSdk = 24
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = false
+            // buildConfigField("boolean", "USE_AI", "true") // 필요 시
+        }
         release {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            // proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
+
+    // 🔴 Compose 완전 비활성화
     buildFeatures {
-        compose = true
+        compose = false
         viewBinding = true
+    }
+    // 🔴 composeOptions 블록이 있었다면 전부 삭제
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions { jvmTarget = "17" }
+
+    packaging {
+        resources.excludes += setOf(
+            "META-INF/DEPENDENCIES",
+            "META-INF/AL2.0",
+            "META-INF/LGPL2.1"
+        )
     }
 }
 
 dependencies {
-
-    // AndroidX & Jetpack Core
-    implementation("androidx.core:core-ktx:1.10.1")
-    implementation("androidx.appcompat:appcompat:1.7.0") // appcompat-resources 포함
-    implementation("androidx.activity:activity-ktx:1.8.0")
+    // AndroidX
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.activity:activity-ktx:1.9.2")
     implementation("androidx.fragment:fragment-ktx:1.8.6")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.annotation:annotation:1.9.1")
-
-    // UI - Views
-    implementation("com.google.android.material:material:1.10.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4") // 2.2.0-beta01 -> 안정 버전으로 변경 권장
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
-    implementation("androidx.viewpager2:viewpager2:1.1.0")
-    implementation("androidx.gridlayout:gridlayout:1.0.0") // 중복 선언 제거
-
-    // UI - Jetpack Compose
-    implementation("androidx.compose.ui:ui:1.7.8")
-    implementation("androidx.compose.material3:material3:1.3.1")
-
-    // Firebase (BOM - Bill of Materials)
-    implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-auth-ktx") // firebase-auth 포함
-    implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-storage")
-    implementation("com.firebaseui:firebase-ui-storage:8.0.2")
-
-    // Google Services
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
-
-    // 유틸리티 (Utility)
-    implementation("com.github.bumptech.glide:glide:4.15.1")      // 이미지 로딩
-    kapt("com.github.bumptech.glide:compiler:4.15.1")
-    implementation("org.jsoup:jsoup:1.15.3")                       // HTML 파싱
-    implementation("androidx.emoji2:emoji2:1.4.0")                 // 이모지
-    implementation("androidx.emoji2:emoji2-views-helper:1.4.0")
-
-    // 테스트 (Test)
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
-    // Jetpack Compose 테스트
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
-
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("at.favre.lib:bcrypt:0.10.2")
+    implementation("com.google.android.material:material:1.12.0")
+
+    // Firebase (BoM으로 버전 통합)
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-functions-ktx")   // Cloud Functions 클라
+
+    // 코루틴 (+ Tasks.await())
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
+
+    // Glide
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    kapt("com.github.bumptech.glide:compiler:4.16.0")
+
+    // BCrypt (org.mindrot)
     implementation("org.mindrot:jbcrypt:0.4")
+    // BCrypt (Favre) — at.* 패키지 사용
+    implementation("at.favre.lib:bcrypt:0.10.2")
+
+    // Google Sign-In (Google Play services)
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
+
+    implementation("org.conscrypt:conscrypt-android:2.5.2")
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
 }

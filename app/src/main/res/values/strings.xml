@@ -16,4 +16,12 @@
     <string name="warn_password_not_match">비밀번호가 일치하지 않습니다.</string>
     <string name="label_terms_privacy">이용약관 및 개인정보 동의</string>
     <string name="action_sign_up_submit">가입하기</string>
+    <string name="logo_ai">Ai</string>
+    <string name="logo_rest">건강식단</string>
+    <string name="tab_health_state">나의 건강 상태</string>
+    <string name="tab_saved_menu">찜한 식단</string>
+    <string name="title_today_recommend">오늘의 추천</string>
+    <string name="cd_mypage">마이페이지</string>
+    <string name="cd_back">뒤로가기</string>
+    <string name="cd_refresh">새로고침</string>
 </resources>

@@ -110,14 +110,13 @@
             android:textStyle="bold"
             android:textSize="18sp"
             android:textColor="@color/white"
-        android:background="@drawable/bg_login_button"
-        android:backgroundTint="@null"
-        app:backgroundTint="@null"
-        android:stateListAnimator="@null"
-        app:layout_constraintTop_toBottomOf="@id/et_password"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
+            android:background="@drawable/bg_login_button"
+            android:backgroundTint="@null"
+            app:backgroundTint="@null"
+            android:stateListAnimator="@null"
+            app:layout_constraintTop_toBottomOf="@id/et_password"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <!-- 7) 하단 링크 3개 -->
         <LinearLayout
@@ -166,8 +165,6 @@
         </LinearLayout>
 
         <!-- 8) 구글 로그인 버튼(모양 유지, 위치만 조정) -->
-
-        <!-- 하단 여백 -->
         <com.google.android.gms.common.SignInButton
             android:id="@+id/btn_google_sign_in"
             android:layout_width="0dp"
@@ -176,11 +173,20 @@
             android:layout_marginTop="100dp"
             android:layout_marginEnd="36dp"
             android:contentDescription="@string/desc_google_login"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/link_container"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@id/link_container" />
+
+        <!-- ✅ 9) 진행 표시용 ProgressBar (LoginActivity에서 참조) -->
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/btn_google_sign_in"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

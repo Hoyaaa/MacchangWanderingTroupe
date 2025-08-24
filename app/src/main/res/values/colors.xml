@@ -16,7 +16,7 @@
     <color name="your_primary_color">#FF6200EE</color> <color name="your_primary_dark_color">#FF3700B3</color> <color name="your_on_primary_color">#FFFFFFFF</color> <color name="your_secondary_color">#FF03DAC5</color> <color name="your_secondary_dark_color">#FF018786</color> <color name="your_on_secondary_color">#FF000000</color>
     <color name="brandPrimary">#D2B0B0</color>     <!-- 버튼 기본색 -->
     <color name="brandSecondary">#EDD8D8</color>  <!-- 연한 분리 라인 -->
-
+    <color name="ic_launcher_background">#FFFFFF</color>
     <!-- 텍스트/버튼 컬러 -->
     <color name="ai_text">#605E5E</color>
     <!-- 3분할 바 색상 -->

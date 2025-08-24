@@ -12,7 +12,60 @@
           "package_name": "com.example.aihealth"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "768805432665-2j8hr2s0c8no3np4ll0109miij0h581m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aihealth",
+            "certificate_hash": "7ca441f2932187d3f8a2910cfab342eb6cae1770"
+          }
+        },
+        {
+          "client_id": "768805432665-c6fu4nee4ofm64p1utbl1smf4do9939d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aihealth",
+            "certificate_hash": "32a2c251ce0b59589b2139552aea83adb2c7f08f"
+          }
+        },
+        {
+          "client_id": "768805432665-dbr42nvmm6qk16642qk1t9dddt08e3a7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aihealth",
+            "certificate_hash": "34267ad0f88d2b5751ee529bd2cec031f42919f6"
+          }
+        },
+        {
+          "client_id": "768805432665-gl9lf30ucoituhifo1li340e8ln683b6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aihealth",
+            "certificate_hash": "65a00d63cd9cb4cbf4be2062f9637a8d6ea9cc4a"
+          }
+        },
+        {
+          "client_id": "768805432665-llj9c88chaf5u9om4ihgojjg1shkpk8n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aihealth",
+            "certificate_hash": "15c62ea7733dac59ae9774fc06ac625109566b1f"
+          }
+        },
+        {
+          "client_id": "768805432665-t3sgifhgjibmin8ug8f8v72tikao63hk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aihealth",
+            "certificate_hash": "2286cc921fdfab9f91fd87a3b44f4c713eea1972"
+          }
+        },
+        {
+          "client_id": "768805432665-8rpsoagr4b0qaasd4etmlhu5hnkg7n7p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAL_2iRIfEvJIW_xgNWSpUDGDyDCkEF7rs"
@@ -20,7 +73,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "768805432665-8rpsoagr4b0qaasd4etmlhu5hnkg7n7p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
