@@ -31,6 +31,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.Locale;
 
 public class SignActivity extends AppCompatActivity {
 
@@ -63,12 +66,18 @@ public class SignActivity extends AppCompatActivity {
         btnCheckDup       = findViewById(R.id.btn_check_dup);
         tvPwWarning       = findViewById(R.id.tv_pw_warning);
 
-        // 초기 버튼 상태
+// ★ 추가: 구글에서 전달된 이메일 자동 삽입 (리스너 등록 전)
+        String passedEmail = getIntent().getStringExtra("email");
+        if (passedEmail != null && !passedEmail.isEmpty()) {
+            etEmail.setText(passedEmail);
+            etEmail.setSelection(passedEmail.length());
+        }
+
+// 초기 버튼 상태
         btnSignUp.setEnabled(false);
         btnSignUp.setAlpha(0.5f);
 
-        // ===== 리스너(기존 로직 유지) =====
-        // 이메일이 바뀌면: 중복검사 초기화 + 버튼 재활성화 + 가입 버튼 재평가
+// ===== 리스너(기존 로직 유지) =====
         etEmail.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -78,6 +87,7 @@ public class SignActivity extends AppCompatActivity {
             }
             @Override public void afterTextChanged(Editable s) {}
         });
+
 
         // 비밀번호/확인: 실시간 일치·정책 메시지 & 가입 버튼 재평가
         TextWatcher pwWatcher = new TextWatcher() {
@@ -356,5 +366,16 @@ public class SignActivity extends AppCompatActivity {
 
     private void toast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+    private static String sha256Hex(String s) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] out = md.digest(s.getBytes(StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder(out.length * 2);
+            for (byte b : out) sb.append(String.format(Locale.US, "%02x", b));
+            return sb.toString();
+        } catch (Exception e) {
+            return "";
+        }
     }
 }

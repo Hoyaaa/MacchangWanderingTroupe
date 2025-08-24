@@ -30,4 +30,19 @@
         <item name="backgroundTint">@color/pink_300</item>
         <item name="cornerRadius">18dp</item>
     </style>
+
+    <style name="ThemeOverlay_AiHealth_FullScreenBottomSheet"
+        parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <!-- 상태바까지 꽉 채우기 -->
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <!-- 모서리 라운드가 거슬리면 제거용(선택) -->
+        <item name="shapeAppearanceCornerExtraLarge">@style/ShapeAppearanceOverlay_NoCorners</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay_NoCorners"
+        parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">0dp</item>
+    </style>
 </resources>

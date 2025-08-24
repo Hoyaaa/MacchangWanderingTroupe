@@ -17,6 +17,8 @@ class TodayMenuActivity : AppCompatActivity() {
     private lateinit var btnBack: ImageView
     private lateinit var btnRefresh: ImageButton
     private lateinit var tvAnalysis: TextView
+    // ✅ 추가: 마이페이지 버튼
+    private lateinit var btnMyPage: ImageView
 
     private val uiScope = MainScope()
     private var currentEmail: String? = null
@@ -38,6 +40,8 @@ class TodayMenuActivity : AppCompatActivity() {
         btnBack = findViewById(R.id.btn_back)
         btnRefresh = findViewById(R.id.btn_refresh)
         tvAnalysis = findViewById(R.id.tv_analysis)
+        // ✅ 추가: 마이페이지 버튼 바인딩 (레이아웃 id가 다르면 변경)
+        btnMyPage = findViewById(R.id.btn_mypage)
 
         rv.layoutManager = GridLayoutManager(this, 2)
 
@@ -81,6 +85,11 @@ class TodayMenuActivity : AppCompatActivity() {
             shownIds.clear()
             requestBatch(exclude = emptyList(), resetIfEmpty = false)
             true
+        }
+
+        // ✅ 추가: 마이페이지 이동
+        btnMyPage.setOnClickListener {
+            startActivity(Intent(this, MyPageActivity::class.java))
         }
 
         currentEmail = resolveEmailOrRedirect() ?: return

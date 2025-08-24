@@ -38,8 +38,9 @@ android {
     // 🔴 composeOptions 블록이 있었다면 전부 삭제
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17   // 또는 VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_17   // 또는 VERSION_1_8
+        isCoreLibraryDesugaringEnabled = true          // ★ desugaring ON
     }
     kotlinOptions { jvmTarget = "17" }
 
@@ -88,4 +89,11 @@ dependencies {
 
     implementation("org.conscrypt:conscrypt-android:2.5.2")
     implementation ("com.github.bumptech.glide:glide:4.16.0")
+    coreLibraryDesugaring ("com.android.tools:desugar_jdk_libs:2.0.4")
+
+    implementation(platform("com.google.firebase:firebase-bom:33.2.0"))   // 사용중인 BOM 유지/업데이트
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
+
 }
+
