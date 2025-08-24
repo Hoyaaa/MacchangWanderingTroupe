@@ -7,12 +7,22 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.aihealth.util.AuthUtils;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -22,21 +32,15 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Locale;
 
-/**
- * LoginActivity (Google 로그인 제거 버전)
- * - 구글 로그인 관련 코드/의존성/런처 제거
- * - 일반 이메일/비밀번호 로그인만 활성화
- * - FirebaseAuth 1차, 실패 시 Firestore(usercode.password_hash) 보조 검증
- * - 가입 필요 시 SignActivity로 이동
- * - 성공 시 LoadingActivity(mode=analyze) → MainActivity
- */
 public class LoginActivity extends AppCompatActivity {
 
     // Firebase
     private FirebaseAuth auth;
     private FirebaseFirestore db;
+    private GoogleSignInClient googleClient;
 
     // UI
+    private View btnGoogle;          // com.google.android.gms.common.SignInButton (캐스팅 X, View로 처리)
     private View btnLogin;           // 일반 로그인 버튼
     private ProgressBar progress;
     private View tvSignUp, tvFindId, tvFindPw;
@@ -47,24 +51,31 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // 레이아웃에 남아 있을 수 있는 구글 버튼은 가려 둔다 (id: btn_google_sign_in)
-        try {
-            View g = findViewById(R.id.btn_google_sign_in);
-            if (g != null) g.setVisibility(View.GONE);
-        } catch (Throwable ignored) {}
-
         FirebaseApp.initializeApp(this);
         auth = FirebaseAuth.getInstance();
         db   = FirebaseFirestore.getInstance();
 
+        // Google Sign-In 클라이언트
+        GoogleSignInOptions gso = new GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        googleClient = GoogleSignIn.getClient(this, gso);
+
         // UI binding
-        etEmail    = findViewById(R.id.et_email);
-        etPassword = findViewById(R.id.et_password);
-        btnLogin   = findViewById(R.id.btn_login);
-        progress   = findViewById(R.id.progress);
-        tvSignUp   = findViewById(R.id.tv_sign_up);
-        tvFindId   = findViewById(R.id.tv_find_id);
-        tvFindPw   = findViewById(R.id.tv_find_pw);
+        etEmail   = findViewById(R.id.et_email);
+        etPassword= findViewById(R.id.et_password);
+        btnLogin  = findViewById(R.id.btn_login);
+        btnGoogle = findViewById(R.id.btn_google_sign_in);
+        progress  = findViewById(R.id.progress) instanceof ProgressBar ? (ProgressBar) findViewById(R.id.progress) : null;
+        tvSignUp  = findViewById(R.id.tv_sign_up);
+        tvFindId  = findViewById(R.id.tv_find_id);
+        tvFindPw  = findViewById(R.id.tv_find_pw);
+
+        if (btnGoogle instanceof SignInButton) {
+            ((SignInButton) btnGoogle).setSize(SignInButton.SIZE_WIDE);
+        }
 
         // 일반 로그인
         if (btnLogin != null) {
@@ -76,7 +87,16 @@ public class LoginActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(pw))       { toast("비밀번호를 입력해 주세요."); return; }
 
                 showLoading(true);
+                // 1차: FirebaseAuth 이메일/비번 로그인
                 loginWithFirebaseAuth(emailRaw, pw);
+            });
+        }
+
+        // 구글 로그인
+        if (btnGoogle != null) {
+            btnGoogle.setOnClickListener(v -> {
+                showLoading(true);
+                googleLauncher.launch(googleClient.getSignInIntent());
             });
         }
 
@@ -86,6 +106,7 @@ public class LoginActivity extends AppCompatActivity {
                 String emailRaw = safeText(etEmail);
                 Intent i = new Intent(this, SignActivity.class);
                 if (!TextUtils.isEmpty(emailRaw)) i.putExtra("email", emailRaw.trim());
+                i.putExtra("from_google", false);
                 startActivity(i);
             });
         }
@@ -93,6 +114,60 @@ public class LoginActivity extends AppCompatActivity {
         // (옵션) 아이디/비번 찾기
         if (tvFindId != null) tvFindId.setOnClickListener(v -> toast("아이디 찾기 준비 중입니다."));
         if (tvFindPw != null) tvFindPw.setOnClickListener(v -> toast("비밀번호 찾기 준비 중입니다."));
+    }
+
+    // ===== Google → FirebaseAuth 연동 =====
+    private final ActivityResultLauncher<Intent> googleLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() != RESULT_OK || result.getData() == null) {
+                            showLoading(false);
+                            toast("구글 로그인이 취소되었어요.");
+                            return;
+                        }
+                        try {
+                            GoogleSignInAccount acct = GoogleSignIn
+                                    .getSignedInAccountFromIntent(result.getData())
+                                    .getResult(ApiException.class);
+                            if (acct == null) {
+                                showLoading(false);
+                                toast("구글 로그인에 실패했어요. 다시 시도해 주세요.");
+                                return;
+                            }
+                            firebaseAuthWithGoogle(acct.getIdToken());
+                        } catch (ApiException e) {
+                            showLoading(false);
+                            toast("구글 로그인 오류: " + e.getMessage());
+                        }
+                    }
+            );
+
+    private void firebaseAuthWithGoogle(String idToken) {
+        if (TextUtils.isEmpty(idToken)) {
+            showLoading(false);
+            toast("구글 토큰이 비어 있습니다.");
+            return;
+        }
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        auth.signInWithCredential(credential)
+                .addOnSuccessListener(result -> {
+                    FirebaseUser user = auth.getCurrentUser();
+                    if (user == null || user.getEmail() == null) {
+                        showLoading(false);
+                        toast("사용자 이메일을 가져오지 못했습니다.");
+                        return;
+                    }
+                    String email = normalizeEmail(user.getEmail());
+
+                    try { AuthUtils.cacheLastEmail(this, email); } catch (Throwable ignored) {}
+
+                    routeByUsercodeExistenceFlexible(email, /*displayName*/ user.getDisplayName(), /*fromGoogle*/ true);
+                })
+                .addOnFailureListener(e -> {
+                    showLoading(false);
+                    toast("로그인 실패: " + e.getMessage());
+                });
     }
 
     // ===== 이메일/비번 로그인: 1차 FirebaseAuth, 실패 시 Firestore 해시 보조검증 =====
@@ -105,10 +180,8 @@ public class LoginActivity extends AppCompatActivity {
                     String authedEmail = user != null && user.getEmail() != null
                             ? normalizeEmail(user.getEmail()) : emailNorm;
 
-                    try { AuthUtils.cacheLastEmail(this, authedEmail); } catch (Throwable ignored) {}
-
                     // 인증 성공 → usercode 문서 존재 여부로 분기
-                    routeByUsercodeExistenceFlexible(authedEmail);
+                    routeByUsercodeExistenceFlexible(authedEmail, /*displayName*/ null, /*fromGoogle*/ false);
                 })
                 .addOnFailureListener(e -> {
                     // FirebaseAuth 실패 → Firestore password_hash 보조검증 시도 (레거시/커스텀 해시 호환)
@@ -116,10 +189,12 @@ public class LoginActivity extends AppCompatActivity {
                             .get()
                             .addOnSuccessListener(snap -> {
                                 if (!snap.exists()) {
-                                    // 아예 회원이 아님 → 가입 화면
+                                    // 문서 자체가 없으면 가입 유도
                                     showLoading(false);
+                                    toast("가입 이력이 없습니다. 회원가입 화면으로 이동합니다.");
                                     Intent i = new Intent(this, SignActivity.class);
                                     i.putExtra("email", emailNorm);
+                                    i.putExtra("from_google", false);
                                     startActivity(i);
                                     return;
                                 }
@@ -130,7 +205,6 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                                 // Firestore 해시 통과 시 분석 화면
                                 showLoading(false);
-                                try { AuthUtils.cacheLastEmail(this, emailNorm); } catch (Throwable ignored2) {}
                                 goAnalyze(emailNorm);
                             })
                             .addOnFailureListener(ex -> {
@@ -140,9 +214,10 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    // ===== usercode 존재 여부를 소문자 id 기준으로 확인 =====
-    private void routeByUsercodeExistenceFlexible(String emailNormalized) {
+    // ===== usercode 존재 여부를 소문자 id → 원문 id 순으로 유연하게 확인 =====
+    private void routeByUsercodeExistenceFlexible(String emailNormalized, @Nullable String displayName, boolean fromGoogle) {
         final String emailLower = emailNormalized;
+        final String emailRaw   = emailNormalized; // 이미 normalizeEmail에서 lower로 변환
 
         db.collection("usercode").document(emailLower)
                 .get()
@@ -150,12 +225,27 @@ public class LoginActivity extends AppCompatActivity {
                     if (snapLower.exists()) {
                         showLoading(false);
                         goAnalyze(emailLower);
-                    } else {
-                        showLoading(false);
-                        Intent i = new Intent(this, SignActivity.class);
-                        i.putExtra("email", emailLower);
-                        startActivity(i);
+                        return;
                     }
+                    // 혹시 과거에 대소문자 섞인 id로 저장된 경우(안전 가드)
+                    db.collection("usercode").document(emailRaw)
+                            .get()
+                            .addOnSuccessListener(snapRaw -> {
+                                showLoading(false);
+                                if (snapRaw.exists()) {
+                                    goAnalyze(emailRaw);
+                                } else {
+                                    Intent i = new Intent(this, SignActivity.class);
+                                    i.putExtra("email", emailLower);
+                                    if (displayName != null) i.putExtra("name", displayName);
+                                    i.putExtra("from_google", fromGoogle);
+                                    startActivity(i);
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                showLoading(false);
+                                toast("회원 정보 확인 실패: " + e.getMessage());
+                            });
                 })
                 .addOnFailureListener(e -> {
                     showLoading(false);
@@ -170,9 +260,11 @@ public class LoginActivity extends AppCompatActivity {
         i.putExtra("user_email", email);
         startActivity(i);
         finish();
+        // 캐시
+        try { AuthUtils.cacheLastEmail(this, email); } catch (Throwable ignored) {}
     }
 
-    // ===== Firestore password_hash 보조 검증 =====
+    // ===== 비밀번호 보조 검증 (Firestore) =====
     private boolean verifyPasswordWithSnapshot(DocumentSnapshot snap, String plainPassword) {
         // 1) password_hash 우선 (SHA-256 hex / BCrypt / 기타)
         String hash = getAsStringSafe(snap.get("password_hash"));
@@ -187,47 +279,33 @@ public class LoginActivity extends AppCompatActivity {
 
             // 1-2) BCrypt → 리플렉션으로 org.mindrot.jbcrypt.BCrypt.checkpw 호출 (의존성 없어도 시도)
             if (hash.startsWith("$2a$") || hash.startsWith("$2b$") || hash.startsWith("$2y$")) {
-                try {
-                    Class<?> bcrypt = Class.forName("org.mindrot.jbcrypt.BCrypt");
-                    Method method = bcrypt.getMethod("checkpw", String.class, String.class);
-                    Object ok = method.invoke(null, plainPassword, hash);
-                    if (ok instanceof Boolean) return (Boolean) ok;
-                } catch (Throwable ignored) {}
+                Boolean ok = checkBcryptByReflection(plainPassword, hash);
+                if (ok != null) return ok;
+                // 리플렉션 실패 시엔 불일치로 간주
+                return false;
             }
+
+            // 1-3) 마지막 안전장치: 혹시 평문이 hash 필드에 들어간 사례
+            if (hash.equals(plainPassword)) return true;
         }
 
-        // 2) 폴백: password_plain 필드가 있는 경우(개발 중 임시) 직접 비교
-        String plain = getAsStringSafe(snap.get("password_plain"));
-        if (!TextUtils.isEmpty(plain)) {
-            return plain.equals(plainPassword);
-        }
-
-        return false;
+        // 2) 레거시 평문 필드
+        String legacyPlain = getAsStringSafe(snap.get("password"));
+        return !TextUtils.isEmpty(legacyPlain) && legacyPlain.equals(plainPassword);
     }
 
-    // ===== 로딩 표시 =====
-    private void showLoading(boolean show) {
-        if (progress != null) progress.setVisibility(show ? View.VISIBLE : View.GONE);
-        if (btnLogin != null) btnLogin.setEnabled(!show);
-    }
-
-    // ===== 공통 유틸 =====
-    private static String normalizeEmail(String email) {
-        return email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
+    private static Boolean checkBcryptByReflection(String plain, String hash) {
+        try {
+            Class<?> c = Class.forName("org.mindrot.jbcrypt.BCrypt");
+            Method m = c.getMethod("checkpw", String.class, String.class);
+            Object r = m.invoke(null, plain, hash);
+            if (r instanceof Boolean) return (Boolean) r;
+        } catch (Throwable ignored) {}
+        return null; // 호출 실패
     }
 
     private static boolean isSha256Hex(String s) {
-        if (s == null) return false;
-        int n = s.length();
-        if (!(n == 64)) return false;
-        for (int i = 0; i < n; i++) {
-            char c = s.charAt(i);
-            boolean ok = (c >= '0' && c <= '9') ||
-                    (c >= 'a' && c <= 'f') ||
-                    (c >= 'A' && c <= 'F');
-            if (!ok) return false;
-        }
-        return true;
+        return s != null && s.length() == 64 && s.matches("[0-9a-fA-F]{64}");
     }
 
     private static String sha256Hex(String s) {
@@ -240,6 +318,17 @@ public class LoginActivity extends AppCompatActivity {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    // ===== 공통 유틸 =====
+    private static String normalizeEmail(String email) {
+        return email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
+    }
+
+    private void showLoading(boolean show) {
+        if (progress != null) progress.setVisibility(show ? View.VISIBLE : View.GONE);
+        if (btnLogin  != null) btnLogin.setEnabled(!show);
+        if (btnGoogle != null) btnGoogle.setEnabled(!show);
     }
 
     private static String safeText(@Nullable android.widget.EditText et) {
