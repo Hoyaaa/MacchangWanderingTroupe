@@ -73,5 +73,11 @@
             android:exported="false"
             android:screenOrientation="portrait" />
 
+        <!-- ✅ 찜한 목록  -->
+        <activity
+            android:name=".FavMenuActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
     </application>
 </manifest>

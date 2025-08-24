@@ -80,6 +80,16 @@ class MainActivity : AppCompatActivity() {
         btnMyPage    = findViewById(R.id.btn_mypage)
         btnTodayMenu = findViewById(R.id.btn_today_menu)
         btnHealthInfo= findViewById(R.id.btn_health_info) // ← 추가
+// MainActivity.kt (onCreate 안에 추가)
+        val tabSaved = findViewById<TextView>(R.id.tab_saved_menu)
+        tabSaved.setOnClickListener {
+            // (선택) 로그인 이메일 전달하고 싶으면 아래 주석 해제
+             val email = FirebaseAuth.getInstance().currentUser?.email
+            startActivity(
+                Intent(this, FavMenuActivity::class.java)
+                // .apply { email?.let { putExtra("user_email", it) } }
+            )
+        }
 
         // 오늘 날짜
         val seoul = ZoneId.of("Asia/Seoul")
@@ -90,6 +100,7 @@ class MainActivity : AppCompatActivity() {
         btnMyPage.setOnClickListener {
             startActivity(Intent(this, MyPageActivity::class.java))
         }
+
 
         // ✅ 이메일 해석: Intent → FirebaseAuth → SharedPreferences
         userEmail = resolveUserEmail()
